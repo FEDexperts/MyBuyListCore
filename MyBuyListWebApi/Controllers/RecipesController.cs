@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MyBuyListDataAccess;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MyBuyListDataAccess;
 using System.Web.Http;
 
 namespace MyBuyListWebApi.Controllers
@@ -23,7 +23,8 @@ namespace MyBuyListWebApi.Controllers
 
     public class RecipesController : ApiController
     {
-        public IEnumerable<RecipeModel> Get()
+        [HttpGet]
+        public IEnumerable<RecipeModel> All()
         {
             using (MyBuyListEntities entities = new MyBuyListEntities())
             {
@@ -31,11 +32,25 @@ namespace MyBuyListWebApi.Controllers
                 {
                     RecipeId = r.RecipeId,
                     RecipeName = r.RecipeName
-                }).Take(10).ToList();
+                }).ToList();
             }
         }
 
-        public RecipeModel Get(int id)
+        [HttpGet]
+        public IEnumerable<RecipeModel> ByName(string id)
+        {
+            using (MyBuyListEntities entities = new MyBuyListEntities())
+            {
+                return entities.Recipes.Where(p => p.RecipeName.Contains(id)).Select(r => new RecipeModel
+                {
+                    RecipeId = r.RecipeId,
+                    RecipeName = r.RecipeName
+                }).ToList();
+            }
+        }
+
+        [HttpGet]
+        public RecipeModel ById(int id)
         {
             try
             {
