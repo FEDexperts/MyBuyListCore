@@ -5,29 +5,17 @@ using System.Linq;
 using System.Web.Http;
 using WebApi.Models;
 
-namespace MyBuyListWebApi.Controllers
+namespace WebApi.Controllers
 {
+    //[Authorize]
     public class RecipesController : ApiController
     {
         [HttpGet]
-        public IEnumerable<RecipeModel> All()
+        public IEnumerable<RecipeModel> List()
         {
             using (MyBuyListEntities entities = new MyBuyListEntities())
             {
                 return entities.Recipes.Select(r => new RecipeModel
-                {
-                    RecipeId = r.RecipeId,
-                    RecipeName = r.RecipeName
-                }).ToList();
-            }
-        }
-
-        [HttpGet]
-        public IEnumerable<RecipeModel> ByName(string id)
-        {
-            using (MyBuyListEntities entities = new MyBuyListEntities())
-            {
-                return entities.Recipes.Where(p => p.RecipeName.Contains(id)).Select(r => new RecipeModel
                 {
                     RecipeId = r.RecipeId,
                     RecipeName = r.RecipeName
@@ -75,6 +63,19 @@ namespace MyBuyListWebApi.Controllers
             catch(Exception ex)
             {
                 return null;
+            }
+        }
+
+        [HttpGet]
+        public IEnumerable<FoodModel> Ingrediants()
+        {
+            using (MyBuyListEntities entities = new MyBuyListEntities())
+            {
+                return entities.Foods.Select(r => new FoodModel
+                {
+                    FoodId = r.FoodId,
+                    FoodName = r.FoodName
+                }).ToList();
             }
         }
     }
