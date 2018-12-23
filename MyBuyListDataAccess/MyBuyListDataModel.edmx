@@ -457,6 +457,10 @@ warning 6002: The table/view 'MyBuyList.dbo.ShoppingLists' does not have a prima
           </Key>
           <Property Name="USER_ID" Type="int" Nullable="false" />
           <Property Name="ITEMS" Type="nvarchar" MaxLength="500" />
+          <Property Name="ID" Type="int" />
+          <Property Name="CREATED_BY" Type="nvarchar" MaxLength="50" />
+          <Property Name="CREATE_DATE" Type="datetime" />
+          <Property Name="ACTIVE" Type="bit" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -497,6 +501,7 @@ warning 6002: The table/view 'MyBuyList.dbo.ShoppingLists' does not have a prima
           <Property Name="UserTypeId" Type="int" Nullable="false" />
           <Property Name="Email" Type="nvarchar" MaxLength="250" Nullable="false" />
           <Property Name="AgreeToMail" Type="bit" Nullable="false" />
+          <Property Name="Token" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="UserShoppingList">
           <Key>
@@ -1461,7 +1466,11 @@ warning 6002: The table/view 'MyBuyList.dbo.RecipesView' does not have a primary
           <EntitySet Name="ShoppingLists" EntityType="Self.ShoppingLists" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [ShoppingLists].[USER_ID] AS [USER_ID], 
-    [ShoppingLists].[ITEMS] AS [ITEMS]
+    [ShoppingLists].[ITEMS] AS [ITEMS], 
+    [ShoppingLists].[ID] AS [ID], 
+    [ShoppingLists].[CREATED_BY] AS [CREATED_BY], 
+    [ShoppingLists].[CREATE_DATE] AS [CREATE_DATE], 
+    [ShoppingLists].[ACTIVE] AS [ACTIVE]
     FROM [dbo].[ShoppingLists] AS [ShoppingLists]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="FoodConvertersList" EntityType="Self.FoodConvertersList" store:Type="Views" store:Schema="dbo">
@@ -2139,6 +2148,7 @@ warning 6002: The table/view 'MyBuyList.dbo.RecipesView' does not have a primary
           <NavigationProperty Name="Menus1" Relationship="Self.MenusInShoppingList" FromRole="Users" ToRole="Menus" />
           <NavigationProperty Name="Menus2" Relationship="Self.UserFavoriteMenus" FromRole="Users" ToRole="Menus" />
           <NavigationProperty Name="Recipes1" Relationship="Self.UserFavoriteRecipes" FromRole="Users" ToRole="Recipes" />
+          <Property Name="Token" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="UserShoppingList">
           <Key>
@@ -2237,6 +2247,10 @@ warning 6002: The table/view 'MyBuyList.dbo.RecipesView' does not have a primary
           <Property Name="USER_ID" Type="Int32" Nullable="false" />
           <Property Name="ITEMS" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="User" Relationship="Self.ShoppingLists_fk" FromRole="ShoppingLists" ToRole="Users" />
+          <Property Name="ID" Type="Int32" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CREATE_DATE" Type="DateTime" Precision="3" />
+          <Property Name="ACTIVE" Type="Boolean" />
         </EntityType>
         <EntityType Name="FoodConvertersList">
           <Key>
@@ -3701,6 +3715,7 @@ warning 6002: The table/view 'MyBuyList.dbo.RecipesView' does not have a primary
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="MyBuyListModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Token" ColumnName="Token" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
@@ -3810,6 +3825,10 @@ warning 6002: The table/view 'MyBuyList.dbo.RecipesView' does not have a primary
           <EntitySetMapping Name="ShoppingLists">
             <EntityTypeMapping TypeName="MyBuyListModel.ShoppingList">
               <MappingFragment StoreEntitySet="ShoppingLists">
+                <ScalarProperty Name="ACTIVE" ColumnName="ACTIVE" />
+                <ScalarProperty Name="CREATE_DATE" ColumnName="CREATE_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="USER_ID" ColumnName="USER_ID" />
                 <ScalarProperty Name="ITEMS" ColumnName="ITEMS" />
               </MappingFragment>

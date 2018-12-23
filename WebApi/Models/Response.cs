@@ -16,9 +16,9 @@ namespace WebApi.Models
         public ResponseCodes code;
     }
 
-    public class SuccessResponse: Response
+    public class SuccessResponse<T>: Response
     {
-        public Array results;
+        public T results;
 
         public SuccessResponse()
         {
@@ -28,8 +28,7 @@ namespace WebApi.Models
 
     public class FailureResponse : Response
     {
-        public string message;
-        public string innerMessage;
+        public Exception exception;
 
         public FailureResponse()
         {

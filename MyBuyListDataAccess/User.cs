@@ -36,6 +36,7 @@ namespace MyBuyListDataAccess
         public int UserTypeId { get; set; }
         public string Email { get; set; }
         public bool AgreeToMail { get; set; }
+        public string Token { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Food> Foods { get; set; }

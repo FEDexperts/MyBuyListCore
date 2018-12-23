@@ -16,6 +16,10 @@ namespace MyBuyListDataAccess
     {
         public int USER_ID { get; set; }
         public string ITEMS { get; set; }
+        public Nullable<int> ID { get; set; }
+        public string CREATED_BY { get; set; }
+        public Nullable<System.DateTime> CREATE_DATE { get; set; }
+        public Nullable<bool> ACTIVE { get; set; }
     
         public virtual User User { get; set; }
     }

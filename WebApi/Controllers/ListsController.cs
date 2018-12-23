@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using WebApi.Classes;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -14,180 +15,200 @@ namespace WebApi.Controllers
         public int value;
     }
 
+    public enum ListType
+    {
+        missing,
+        shopping
+    }
+
+    [BasicAuth]
+    [RoutePrefix("api/lists")]
     [EnableCors(origins:"*", headers:"*", methods:"*")]
     public class ListsController : ApiController
     {
         [HttpGet]
-        [Route("api/lists/missing/{listId}")]
-        public Response Missing(int listId)
+        [Route("hello")]
+        public string HelloWorld()
         {
             try
             {
-                using (MyBuyListEntities entities = new MyBuyListEntities())
-                {
-                    return new SuccessResponse
-                    {
-                        results = (from a in entities.MissingLists
-                                   join b in entities.MissingListDetails on a.ID equals b.LIST_ID
-                                   where a.ID == listId
-                                   select new ListModel
-                                   {
-                                       listId = a.ID,
-                                       ownerId = a.CREATED_BY,
-                                       itemId = b.Food.FoodId,
-                                       itemName = b.Food.FoodName,
-                                       itemUnit = b.MeasurementUnit.UnitName,
-                                       value = b.QUANTITY
-                                   }).ToArray()
-                    };
-                }
+                return "Hello World";
             }
             catch (Exception e)
             {
-                return new FailureResponse();
+                throw new Exception(e.Message);
             }
         }
 
         [HttpGet]
-        [Route("api/lists/missing/{listId}/{foodId}")]
-        public Response SingleMissing(int listId, int foodId)
+        [Route("{listType}")]
+        public Response GetAll(string listType)
         {
             try
             {
-                using (MyBuyListEntities entities = new MyBuyListEntities())
+                List list = null;
+
+                switch (listType)
                 {
-                    return new SuccessResponse
-                    {
-                        results = (from a in entities.MissingLists
-                                join b in entities.MissingListDetails on a.ID equals b.LIST_ID
-                                where a.ID == listId && b.Food.FoodId == foodId
-                                select new ListModel
-                                {
-                                    listId = a.ID,
-                                    ownerId = a.CREATED_BY,
-                                    itemId = b.Food.FoodId,
-                                    itemName = b.Food.FoodName,
-                                    itemUnit = b.MeasurementUnit.UnitName
-                                }).ToArray()
-                    };
+                    case "missing":
+                        list = new Missing();
+                        break;
+                    case "shopping":
+                        list = new Shopping();
+                        break;
                 }
+
+                return new SuccessResponse<ListModel[]>
+                {
+                    results = list.GetAll()
+                };
             }
-            catch (Exception e) {
-                return new FailureResponse();
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("{listType}/{foodId}")]
+        public ListModel GetSingle(string listType, int foodId)
+        {
+            try
+            {
+                List list = null;
+
+                switch (listType)
+                {
+                    case "missing":
+                        list = new Missing();
+                        break;
+                    case "shopping":
+                        list = new Shopping();
+                        break;
+                }
+
+                return list.GetSingle(foodId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
             }
         }
 
         [HttpPost]
-        [Route("api/lists/missing/{listId}")]
-        public Response AddItem(int listId, [FromBody] DataModel body )
+        [Route("{listType}")]
+        public Response Add(string listType, [FromBody] ListModel body)
         {
             try
             {
-                using (MyBuyListEntities entities = new MyBuyListEntities())
+                List list = null;
+
+                switch (listType)
                 {
-                    Food food = entities.Foods.Where(item => item.FoodId == body.foodId).SingleOrDefault();
-                    if (food != null)
-                    {
-                        MissingListDetail _new = new MissingListDetail
-                        {
-                            LIST_ID = listId,
-                            FOOD_ID = body.foodId
-                        };
-                        entities.MissingListDetails.Add(_new);
-                        entities.SaveChanges();
-
-                        ListModel[] result = new ListModel[]
-                        {
-                            new ListModel {
-                                listId = listId,
-                                    itemId = food.FoodId,
-                                    itemName = food.FoodName
-                            }
-                        };
-
-                        return new SuccessResponse
-                        {
-                            results = result
-                        };
-                    }
-                    else
-                    {
-                        return new FailureResponse();
-                    }
+                    case "missing":
+                        list = new Missing();
+                        break;
+                    case "shopping":
+                        list = new Shopping();
+                        break;
                 }
+
+                list.Add(body);
+                return new SuccessResponse<ListModel[]>
+                {
+                    results = list.GetAll()
+                };
             }
             catch (Exception e)
             {
-                return new FailureResponse
-                {
-                    message = e.Message,
-                    innerMessage = e.InnerException?.Message
-                };
+                throw new Exception(e.Message);
             }
         }
 
         [HttpPut]
-        [Route("api/lists/missing/{listId}/{foodId}")]
-        public Response UpdateMissingItem(int listId, int foodId, [FromBody] DataModel body)
+        [Route("{listType}/{foodId}")]
+        public Response Update(string listType, int foodId, [FromBody] ListModel body)
         {
             try
             {
-                using (MyBuyListEntities entities = new MyBuyListEntities())
-                {
-                    MissingListDetail list = entities.MissingListDetails.FirstOrDefault(item => item.LIST_ID == listId && item.FOOD_ID == foodId);
-                    list.QUANTITY = body.value;
-                    entities.SaveChanges();
+                List list = null;
 
-                    return new SuccessResponse { };
+                switch (listType)
+                {
+                    case "missing":
+                        list = new Missing();
+                        break;
+                    case "shopping":
+                        list = new Shopping();
+                        break;
                 }
+
+                return new SuccessResponse<ListModel>
+                {
+                    results = list.update(foodId, body)
+                };
             }
             catch (Exception e) {
-                return new FailureResponse();
+                throw new Exception(e.Message);
             }
         }
 
-        [HttpDelete]
-        [Route("api/lists/missing/{listId}/{foodId}")]
-        public Response DeleteItem(int listId, int foodId)
+        [HttpPatch]
+        [Route("{listType}/{foodId}")]
+        public Response PartialUpdate(string listType, int foodId, [FromBody] ListModel body)
         {
             try
             {
-                using (MyBuyListEntities entities = new MyBuyListEntities())
-                {
-                    MissingListDetail list = entities.MissingListDetails.SingleOrDefault(item => item.LIST_ID == listId && item.FOOD_ID == foodId);
-                    if (list != null)
-                    {
-                        entities.MissingListDetails.Remove(list);
-                        entities.SaveChanges();
-                    }
-                    else
-                    {
-                        throw new Exception("No item found");
-                    }
+                List list = null;
 
-                    return new SuccessResponse
-                    {
-                        results = (from a in entities.MissingLists
-                                   join b in entities.MissingListDetails on a.ID equals b.LIST_ID
-                                   where a.ID == listId
-                                   select new ListModel
-                                   {
-                                       listId = a.ID,
-                                       ownerId = a.CREATED_BY,
-                                       itemId = b.Food.FoodId,
-                                       itemName = b.Food.FoodName,
-                                       itemUnit = b.MeasurementUnit.UnitName,
-                                       value = b.QUANTITY
-                                   }).ToArray()
-                    };
+                switch (listType)
+                {
+                    case "missing":
+                        list = new Missing();
+                        break;
+                    case "shopping":
+                        list = new Shopping();
+                        break;
                 }
+
+                return new SuccessResponse<ListModel>
+                {
+                    results = list.partialUpdate(foodId, body)
+                };
             }
             catch (Exception e)
             {
-                return new FailureResponse
+                throw new Exception(e.Message);
+            }
+        }
+
+
+        [HttpDelete]
+        [Route("{listType}/{foodId}")]
+        public Response Delete(string listType, int foodId)
+        {
+            try
+            {
+                List list = null;
+
+                switch (listType)
                 {
-                    message = e.Message
+                    case "missing":
+                        list = new Missing();
+                        break;
+                    case "shopping":
+                        list = new Shopping();
+                        break;
+                }
+
+                return new SuccessResponse<bool>
+                {
+                    results = list.Delete(foodId)
                 };
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
             }
         }
     }

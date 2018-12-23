@@ -44,7 +44,7 @@
         <EntityTypeShape EntityType="MyBuyListModel.DS_ForumLog" Width="1.5" PointX="5.75" PointY="18.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MyBuyListModel.DS_ForumMessages" Width="1.5" PointX="7.75" PointY="18.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MyBuyListModel.RecipesFavorit" Width="1.5" PointX="11.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyBuyListModel.ShoppingList" Width="1.5" PointX="15.75" PointY="17.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBuyListModel.ShoppingList" Width="1.5" PointX="14.5" PointY="20.5" IsExpanded="true" />
         <EntityTypeShape EntityType="MyBuyListModel.FoodConvertersList" Width="1.5" PointX="19.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MyBuyListModel.RecipeIngredientsList" Width="1.5" PointX="9.75" PointY="19.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MyBuyListModel.RecipesView" Width="1.5" PointX="20.75" PointY="3.75" IsExpanded="true" />

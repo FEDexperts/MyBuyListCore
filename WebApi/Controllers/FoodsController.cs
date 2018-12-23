@@ -8,6 +8,7 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
+    [BasicAuth]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class FoodsController : ApiController
     {
@@ -61,7 +62,7 @@ namespace WebApi.Controllers
             {
                 using (MyBuyListEntities entities = new MyBuyListEntities())
                 {
-                    return new SuccessResponse
+                    return new SuccessResponse<FoodModel[]>
                     {
                         results = (from a in entities.Foods
                                    where a.FoodName.Contains(searchValue)
@@ -75,7 +76,7 @@ namespace WebApi.Controllers
             }
             catch(Exception e)
             {
-                return new FailureResponse();
+                throw new Exception(e.Message);
             }
         }
     }

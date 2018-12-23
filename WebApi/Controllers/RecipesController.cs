@@ -60,7 +60,7 @@ namespace WebApi.Controllers
                     }
                 }
             }
-            catch(Exception ex)
+            catch
             {
                 return null;
             }
