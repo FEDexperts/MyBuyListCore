@@ -143,9 +143,10 @@ namespace WebApi.Controllers
                         break;
                 }
 
-                return new SuccessResponse<ListModel>
+                list.update(foodId, body);
+                return new SuccessResponse<ListModel[]>
                 {
-                    results = list.update(foodId, body)
+                    results = list.GetAll()
                 };
             }
             catch (Exception e) {
@@ -201,9 +202,10 @@ namespace WebApi.Controllers
                         break;
                 }
 
-                return new SuccessResponse<bool>
+                list.Delete(foodId);
+                return new SuccessResponse<ListModel[]>
                 {
-                    results = list.Delete(foodId)
+                    results = list.GetAll()
                 };
             }
             catch (Exception e)
